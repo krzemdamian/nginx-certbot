@@ -1,20 +1,22 @@
-version: '3'
+version: '3.4'
+networks:
+  frontend:
+    external: true
+
 services:
     nginx:
-        #container_name: reverse-proxy
         restart: unless-stopped
         image: nginx
         ports:
          - "443:443"
          - "80:80"
-         #- "3306:3306"
         volumes:
          - ./data/nginx:/etc/nginx/conf.d
          - ./data/certbot/conf:/etc/letsencrypt
          - ./data/certbot/www:/var/www/certbot
         command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
         networks:
-         - bridge
+         - frontend
 
     certbot:
         image: j0nnylester/certbot
